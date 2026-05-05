@@ -5,113 +5,116 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.utils import executor
 
-# --- AYARLAR ---
-API_TOKEN = '8280340805:AAFuelKEDucHd5Y94apt_Cx-v431crhKpSc'
-ADMIN_ID = 6396133995  # Kənan Nəsibov
-ADMIN_USERNAME = "Kenan_Nasibov" # Öz @istifadəçi adını dırnaq içində yaz
+# --- KONFİQURASİYA ---
+TOKEN = '8280340805:AAFuelKEDucHd5Y94apt_Cx-v431crhKpSc'
+ADMIN_ID = 6396133995
+ADMIN_NICK = "gamerxx_99" # Artıq düzgün ləqəb qeyd olundu!
 
 logging.basicConfig(level=logging.INFO)
-bot = Bot(token=API_TOKEN, parse_mode=types.ParseMode.HTML)
-storage = MemoryStorage()
-dp = Dispatcher(bot, storage=storage)
+bot = Bot(token=TOKEN, parse_mode=types.ParseMode.HTML)
+dp = Dispatcher(bot, storage=MemoryStorage())
 
-# --- DİLLƏR VƏ MƏTNLƏR (PREMİUM ÜSLUB) ---
+# --- MULTI-LANGUAGE DB ---
 STRINGS = {
     'az': {
-        'welcome': "✨ <b>Botify Studio-ya Xoş Gəlmisiniz!</b>\n\nBiznesinizi rəqəmsal dünyaya daşıyın. Peşəkar, sürətli və 7/24 aktiv Telegram botları ilə xidmətinizdəyik. 🚀",
-        'btn_order': "🛠 Bot Sifariş Et",
-        'btn_price': "💳 Qiymətlər",
-        'btn_support': "📞 Adminlə Əlaqə",
-        'prices': "💰 <b>Xidmət Paketlərimiz:</b>\n\n🟢 <b>Sadə Bot:</b> 25 AZN\n🟡 <b>Orta Səviyyə:</b> 45 AZN\n🔴 <b>Mağaza Sistemi:</b> 85 AZN\n\n<i>Ödəniş üsulları: Kapital Bank / M10</i>",
-        'order_info': "🎯 <b>Sifariş üçün ödənişi edib, qəbzin (çekin) şəklini bota göndərin.</b>\n\nÖdəniş təsdiqləndikdən sonra mütəxəssisimiz sizinlə əlaqə saxlayacaq.",
-        'support_msg': "👨‍💻 <b>Dəstək və suallar üçün mütəxəssisimizlə birbaşa əlaqə saxlayın:</b>",
-        'confirm_wait': "🕒 <b>Məlumatlarınız göndərildi.</b> Admin tərəfindən yoxlanılır...",
-        'confirmed': "✅ <b>Ödəniş təsdiqləndi!</b> Tezliklə sizinlə əlaqə saxlanılacaq."
+        'start': "💎 <b>Botify Studio-ya Xoş Gəlmisiniz!</b>\n\nTelegram ekosistemində ən peşəkar və avtomatlaşdırılmış həlləri təqdim edirik. Sizin biznesiniz, bizim kodumuz. ✨",
+        'menu': "💎 <b>Əsas Menyu:</b>",
+        'btn_services': "🚀 Xidmətlər", 'btn_prices': "💳 Tariflər", 'btn_support': "👨‍💻 Mütəxəssis Dəstəyi", 'btn_lang': "🌍 Dili Dəyiş",
+        'prices': "📊 <b>Xidmət Paketlərimiz:</b>\n\n📦 <b>Essential:</b> 25 AZN\n⚡ <b>Professional:</b> 55 AZN\n👑 <b>Enterprise:</b> 95 AZN\n\n<i>Ödəniş: Kapital Bank / M10</i>",
+        'order_step1': "📸 <b>Sifariş üçün ödəniş çekini bota göndərin:</b>",
+        'pending': "⏳ <b>Məlumatlarınız mərkəzi sistemə göndərildi.</b> Admin təsdiqi gözlənilir.",
+        'done': "✅ <b>Təbriklər!</b> Ödəniş təsdiqləndi. İşi təhvil vermək üçün admin sizinlə əlaqə saxlayacaq."
     },
     'en': {
-        'welcome': "✨ <b>Welcome to Botify Studio!</b>\n\nProfessional, fast, and 24/7 active Telegram bots for your business. 🚀",
-        'btn_order': "🛠 Order a Bot",
-        'btn_price': "💳 Prices",
-        'btn_support': "📞 Contact Admin",
-        'prices': "💰 <b>Our Packages:</b>\n\n🟢 <b>Basic:</b> $15\n🟡 <b>Intermediate:</b> $30\n🔴 <b>Shop System:</b> $55\n\n<i>Payment: Telegram Stars / KoronaPay</i>",
-        'order_info': "🎯 <b>Please send the payment screenshot to proceed with your order.</b>",
-        'support_msg': "👨‍💻 <b>Contact our specialist for support and questions:</b>",
-        'confirm_wait': "🕒 <b>Processing...</b> Waiting for admin confirmation.",
-        'confirmed': "✅ <b>Payment confirmed!</b> We will contact you shortly."
+        'start': "💎 <b>Welcome to Botify Studio!</b>\n\nProviding elite automation solutions for the Telegram ecosystem. ✨",
+        'menu': "💎 <b>Main Menu:</b>",
+        'btn_services': "🚀 Services", 'btn_prices': "💳 Pricing", 'btn_support': "👨‍💻 Expert Support", 'btn_lang': "🌍 Language",
+        'prices': "📊 <b>Our Packages:</b>\n\n📦 <b>Essential:</b> $15\n⚡ <b>Professional:</b> $35\n👑 <b>Enterprise:</b> $65\n\n<i>Payment: Crypto / Stars</i>",
+        'order_step1': "📸 <b>Send your payment receipt to proceed:</b>",
+        'pending': "⏳ <b>Data transmitted.</b> Awaiting admin verification.",
+        'done': "✅ <b>Success!</b> Payment verified. We will contact you shortly."
     }
-    # Ru və Tr hissələri də bura eyni qayda ilə əlavə oluna bilər
 }
 
-class OrderState(StatesGroup):
-    waiting_for_photo = State()
+class SystemStates(StatesGroup):
+    lang = State()
+    order = State()
 
-# --- KLAVİATURA ---
-def get_main_keyboard(lang):
+# --- KEYBOARDS ---
+def main_kb(l):
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-    # Üst sıra 2 düymə, alt sıra 1 geniş düymə (Dəstək üçün)
-    kb.add(STRINGS[lang]['btn_order'], STRINGS[lang]['btn_price'])
-    kb.add(STRINGS[lang]['btn_support'])
+    kb.add(STRINGS[l]['btn_services'], STRINGS[l]['btn_prices'])
+    kb.add(STRINGS[l]['btn_support'], STRINGS[l]['btn_lang'])
     return kb
 
-def get_support_inline(lang):
+def support_kb(l):
     kb = types.InlineKeyboardMarkup()
-    kb.add(types.InlineKeyboardButton(text="💬 Yazmağa başla", url=f"https://t.me/{ADMIN_USERNAME}"))
+    kb.add(types.InlineKeyboardButton(text="💬 @"+ADMIN_NICK, url=f"https://t.me/{ADMIN_NICK}"))
     return kb
 
 # --- HANDLERS ---
-@dp.message_handler(commands=['start'])
-async def cmd_start(message: types.Message):
+@dp.message_handler(commands=['start'], state="*")
+async def start(m: types.Message):
     kb = types.InlineKeyboardMarkup(row_width=2)
-    kb.add(
-        types.InlineKeyboardButton("🇦🇿 Azərbaycan", callback_data="setlang_az"),
-        types.InlineKeyboardButton("🇬🇧 English", callback_data="setlang_en")
-    )
-    await message.answer("🌍 <b>Dil seçin / Select language:</b>", reply_markup=kb)
+    kb.add(types.InlineKeyboardButton("🇦🇿 Azərbaycan", callback_data="set_az"),
+           types.InlineKeyboardButton("🇬🇧 English", callback_data="set_en"))
+    await m.answer("🌍 <b>Choose your language / Dil seçin:</b>", reply_markup=kb)
 
-@dp.callback_query_handler(lambda c: c.data.startswith('setlang_'))
-async def process_lang(callback: types.CallbackQuery):
-    lang = callback.data.split('_')[1]
-    await bot.delete_message(callback.message.chat.id, callback.message.message_id)
-    await bot.send_message(callback.from_user.id, STRINGS[lang]['welcome'], reply_markup=get_main_keyboard(lang))
-    await callback.answer()
+@dp.callback_query_handler(lambda c: c.data.startswith('set_'), state="*")
+async def set_lang(c: types.CallbackQuery, state: FSMContext):
+    l = c.data.split('_')[1]
+    await state.update_data(lang=l)
+    await bot.delete_message(c.message.chat.id, c.message.message_id)
+    await bot.send_message(c.from_user.id, STRINGS[l]['start'], reply_markup=main_kb(l))
+    await c.answer()
 
-@dp.message_handler(lambda m: any(m.text == STRINGS[l]['btn_price'] for l in STRINGS))
-async def cmd_prices(message: types.Message):
-    lang = 'az' if "Qiymətlər" in message.text else 'en'
-    await message.answer(STRINGS[lang]['prices'])
+@dp.message_handler(lambda m: any(x in m.text for x in ["Tariflər", "Pricing", "💳"]))
+async def prices(m: types.Message, state: FSMContext):
+    data = await state.get_data()
+    l = data.get('lang', 'az')
+    await m.answer(STRINGS[l]['prices'])
 
-@dp.message_handler(lambda m: any(m.text == STRINGS[l]['btn_support'] for l in STRINGS))
-async def cmd_support(message: types.Message):
-    lang = 'az' if "Dəstək" in message.text or "Admin" in message.text else 'en'
-    await message.answer(STRINGS[lang]['support_msg'], reply_markup=get_support_inline(lang))
+@dp.message_handler(lambda m: any(x in m.text for x in ["Dəstək", "Support", "👨‍💻"]))
+async def support(m: types.Message, state: FSMContext):
+    data = await state.get_data()
+    l = data.get('lang', 'az')
+    await m.answer("👨‍💻 <b>Direct Contact:</b>", reply_markup=support_kb(l))
 
-@dp.message_handler(lambda m: any(m.text == STRINGS[l]['btn_order'] for l in STRINGS))
-async def cmd_order(message: types.Message):
-    lang = 'az' if "Sifariş" in message.text else 'en'
-    await message.answer(STRINGS[lang]['order_info'])
-    await OrderState.waiting_for_photo.set()
+@dp.message_handler(lambda m: any(x in m.text for x in ["Xidmətlər", "Services", "🚀"]))
+async def services(m: types.Message, state: FSMContext):
+    data = await state.get_data()
+    l = data.get('lang', 'az')
+    kb = types.InlineKeyboardMarkup(row_width=1)
+    kb.add(types.InlineKeyboardButton("🛒 E-Commerce Bot", callback_data="order_init"),
+           types.InlineKeyboardButton("🛡️ Group Defender", callback_data="order_init"),
+           types.InlineKeyboardButton("🎮 Game Store Bot", callback_data="order_init"))
+    await m.answer("🚀 <b>Available Solutions:</b>", reply_markup=kb)
 
-@dp.message_handler(content_types=['photo'], state=OrderState.waiting_for_photo)
-async def process_payment(message: types.Message, state: FSMContext):
-    lang = 'az' if any(message.text == STRINGS['az'][k] for k in STRINGS['az']) else 'en' # Sadələşdirilmiş dil tapma
-    
-    admin_kb = types.InlineKeyboardMarkup()
-    admin_kb.add(types.InlineKeyboardButton("✅ Təsdiqlə", callback_data=f"accept_{message.from_user.id}"))
-    
-    await bot.send_photo(
-        ADMIN_ID, message.photo[-1].file_id, 
-        caption=f"🔔 <b>YENİ SİFARİŞ!</b>\n👤 Müştəri: {message.from_user.full_name}\n🆔 ID: {message.from_user.id}",
-        reply_markup=admin_kb
-    )
-    await message.answer(STRINGS['az']['confirm_wait']) # Hələlik default az
+@dp.callback_query_handler(lambda c: c.data == "order_init")
+async def order_start(c: types.CallbackQuery, state: FSMContext):
+    data = await state.get_data()
+    l = data.get('lang', 'az')
+    await SystemStates.order.set()
+    await bot.send_message(c.from_user.id, STRINGS[l]['order_step1'])
+    await c.answer()
+
+@dp.message_handler(content_types=['photo'], state=SystemStates.order)
+async def process_order(m: types.Message, state: FSMContext):
+    data = await state.get_data()
+    l = data.get('lang', 'az')
+    admin_btn = types.InlineKeyboardMarkup().add(types.InlineKeyboardButton("✅ Approve", callback_data=f"ok_{m.from_user.id}"))
+    await bot.send_photo(ADMIN_ID, m.photo[-1].file_id, 
+                         caption=f"🔥 <b>NEW ORDER</b>\n\nUser: {m.from_user.full_name}\nID: {m.from_user.id}\nLang: {l}",
+                         reply_markup=admin_btn)
+    await m.answer(STRINGS[l]['pending'])
     await state.finish()
 
-@dp.callback_query_handler(lambda c: c.data.startswith('accept_'))
-async def admin_accept(callback: types.CallbackQuery):
-    user_id = callback.data.split('_')[1]
-    await bot.send_message(user_id, "✅ <b>Təbriklər!</b> Ödənişiniz təsdiqləndi. Admin tezliklə sizinlə əlaqə saxlayacaq.")
-    await callback.message.edit_caption(caption=f"{callback.message.caption}\n\n✅ <b>TƏSDİQLƏNDİ</b>")
-    await callback.answer("Təsdiqləndi!")
+@dp.callback_query_handler(lambda c: c.data.startswith('ok_'))
+async def approve(c: types.CallbackQuery):
+    uid = c.data.split('_')[1]
+    await bot.send_message(uid, "✅ <b>Order Approved!</b> We will contact you shortly.")
+    await c.message.edit_caption("✅ Approved")
+    await c.answer("Notified.")
 
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True)
