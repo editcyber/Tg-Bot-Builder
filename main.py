@@ -6,44 +6,41 @@ from aiogram.utils import executor
 
 # --- KONFİQURASİYA ---
 TOKEN = '8280340805:AAFuelKEDucHd5Y94apt_Cx-v431crhKpSc'
-ADMIN_NICK = "gamerxx_99" # Link olaraq qalır, lakin düymə mətnində görünmür
+ADMIN_ID = 6396133995 # Kenan Nasibov
+ADMIN_NICK = "gamerxx_99" # Peşəkar ləqəbin
 
 logging.basicConfig(level=logging.INFO)
 bot = Bot(token=TOKEN, parse_mode=types.ParseMode.HTML)
 dp = Dispatcher(bot, storage=MemoryStorage())
 
-# --- 4 DİLLİ PREMİUM LÜĞƏT ---
+# --- 4 DİLLİ ELİTE AGENTLİK LÜĞƏTİ ---
 STRINGS = {
     'az': {
-        'start': "✨ <b>Botify Studio | Next-Gen Automation</b>\n\nPeşəkar Telegram həlləri ilə biznesinizi rəqəmsal zirvəyə daşıyın.",
-        'menu': "💎 <b>Əsas Menyu:</b>",
-        'btn_services': "🚀 Xidmətlər", 'btn_support': "👨‍💻 Canlı Dəstək", 'btn_lang': "🌍 Dili Dəyiş",
+        'start': "✨ <b>Botify Studio | Next-Gen Automation</b>\n\nPeşəkar Telegram həlləri ilə biznesinizi rəqəmsal zirvəyə daşıyın. 🚀",
+        'btn_services': "🚀 Xidmətlər", 'btn_support': "👨‍💻 Dəstək", 'btn_lang': "🌍 Dili Dəyiş",
         'services_text': "🛠 <b>Xidmət Kateqoriyaları:</b>\n\nİstədiyiniz sahəni seçin:",
         'cat_shop': "🛒 Mağaza Botu", 'cat_admin': "🛡 Qrup İdarəetmə", 'cat_game': "🎮 Oyun Mağazası",
         'order_btn': "📩 Sifariş Üçün Əlaqə", 'admin_label': "Adminlə Əlaqə",
         'pre_msg': "Salam! Botify Studio-dan yazıram. Bu paketlə maraqlanıram: "
     },
     'tr': {
-        'start': "✨ <b>Botify Studio | Next-Gen Automation</b>\n\nProfesyonel çözümlerle işinizi dijital zirveye taşıyın.",
-        'menu': "💎 <b>Ana Menü:</b>",
-        'btn_services': "🚀 Hizmetler", 'btn_support': "👨‍💻 Canlı Destek", 'btn_lang': "🌍 Dili Değiştir",
-        'services_text': "🛠 <b>Hizmet Kategorileri:</b>\n\nİstediğiniz alanı seçin:",
+        'start': "✨ <b>Botify Studio | Next-Gen Automation</b>\n\nProfesyonel çözümlerle işinizi dijital zirveye taşıyın. 🚀",
+        'btn_services': "🚀 Hizmetler", 'btn_support': "👨‍💻 Destek", 'btn_lang': "🌍 Dili Değiştir",
+        'services_text': "🛠 <b>Hizmet Kategorileri:</b>\n\nİlginizi çeken alanı seçin:",
         'cat_shop': "🛒 Mağaza Botu", 'cat_admin': "🛡 Grup Yönetimi", 'cat_game': "🎮 Oyun Mağazası",
         'order_btn': "📩 Sipariş İçin İletişim", 'admin_label': "Adminle İletişim",
         'pre_msg': "Merhaba! Botify Studio'dan yazıyorum. Bu paketle ilgileniyorum: "
     },
     'ru': {
-        'start': "✨ <b>Botify Studio | Next-Gen Automation</b>\n\nПрофессиональные решения для вашего бизнеса.",
-        'menu': "💎 <b>Главное меню:</b>",
+        'start': "✨ <b>Botify Studio | Next-Gen Automation</b>\n\nПрофессиональные решения для вашего бизнеса. 🚀",
         'btn_services': "🚀 Услуги", 'btn_support': "👨‍💻 Поддержка", 'btn_lang': "🌍 Сменить язык",
-        'services_text': "🛠 <b>Категории услуг:</b>\n\nВыберите интересующую вас область:",
+        'services_text': "🛠 <b>Категории услуг:</b>\n\nВыберите интересующую область:",
         'cat_shop': "🛒 Магазин-бот", 'cat_admin': "🛡 Управление", 'cat_game': "🎮 Игровой магазин",
         'order_btn': "📩 Связаться для заказа", 'admin_label': "Связаться с Админом",
         'pre_msg': "Здравствуйте! Я из Botify Studio. Меня интересует этот пакет: "
     },
     'en': {
-        'start': "✨ <b>Botify Studio | Next-Gen Automation</b>\n\nElite Telegram solutions for your business success.",
-        'menu': "💎 <b>Main Menu:</b>",
+        'start': "✨ <b>Botify Studio | Next-Gen Automation</b>\n\nElite Telegram solutions for your business success. 🚀",
         'btn_services': "🚀 Services", 'btn_support': "👨‍💻 Support", 'btn_lang': "🌍 Change Language",
         'services_text': "🛠 <b>Service Categories:</b>\n\nChoose your area of interest:",
         'cat_shop': "🛒 E-Commerce Bot", 'cat_admin': "🛡 Management", 'cat_game': "🎮 Game Store Bot",
@@ -52,7 +49,7 @@ STRINGS = {
     }
 }
 
-# --- FUNKSİYALAR ---
+# --- KLAVİATURALAR ---
 def main_kb(l):
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     kb.add(STRINGS[l]['btn_services'])
@@ -61,13 +58,15 @@ def main_kb(l):
 
 def services_kb(l):
     kb = types.InlineKeyboardMarkup(row_width=1)
+    # Callback data daxilində dil kodu (l) daşınır ki, dil heç vaxt qarışmasın
     kb.add(
-        types.InlineKeyboardButton(STRINGS[l]['cat_shop'], callback_data=f"info_shop_{l}"),
-        types.InlineKeyboardButton(STRINGS[l]['cat_admin'], callback_data=f"info_admin_{l}"),
-        types.InlineKeyboardButton(STRINGS[l]['cat_game'], callback_data=f"info_game_{l}")
+        types.InlineKeyboardButton(STRINGS[l]['cat_shop'], callback_data=f"inf_{l}_shop"),
+        types.InlineKeyboardButton(STRINGS[l]['cat_admin'], callback_data=f"inf_{l}_admin"),
+        types.InlineKeyboardButton(STRINGS[l]['cat_game'], callback_data=f"inf_{l}_game")
     )
     return kb
 
+# --- HANDLERS ---
 @dp.message_handler(commands=['start'], state="*")
 async def start(m: types.Message):
     kb = types.InlineKeyboardMarkup(row_width=2)
@@ -75,36 +74,46 @@ async def start(m: types.Message):
            types.InlineKeyboardButton("🇹🇷 Tr", callback_data="set_tr"),
            types.InlineKeyboardButton("🇷🇺 Ru", callback_data="set_ru"),
            types.InlineKeyboardButton("🇬🇧 En", callback_data="set_en"))
-    await m.answer("🌍 <b>Choose your language / Dil seçin:</b>", reply_markup=kb)
+    await m.answer("🌍 <b>Choose language / Dil seçin:</b>", reply_markup=kb)
 
 @dp.callback_query_handler(lambda c: c.data.startswith('set_'))
 async def set_lang(c: types.CallbackQuery):
     l = c.data.split('_')[1]
     await bot.delete_message(c.message.chat.id, c.message.message_id)
     await bot.send_message(c.from_user.id, STRINGS[l]['start'], reply_markup=main_kb(l))
+    await c.answer()
 
-@dp.message_handler(lambda m: any(x in m.text for x in ["🚀", "Hizmetler", "Услуги", "Services"]))
+@dp.message_handler(lambda m: "🚀" in m.text)
 async def services(m: types.Message):
-    l = 'az' if "🚀" in m.text else ('tr' if "Hizmetler" in m.text else ('ru' if "Услуги" in m.text else 'en'))
+    # Emojiyə yox, tam mətnə görə dil təyini
+    if "Xidmətlər" in m.text: l = 'az'
+    elif "Hizmetler" in m.text: l = 'tr'
+    elif "Услуги" in m.text: l = 'ru'
+    elif "Services" in m.text: l = 'en'
+    else: l = 'az'
     await m.answer(STRINGS[l]['services_text'], reply_markup=services_kb(l))
 
-@dp.callback_query_handler(lambda c: c.data.startswith('info_'))
+@dp.callback_query_handler(lambda c: c.data.startswith('inf_'))
 async def details(c: types.CallbackQuery):
-    _, cat, l = c.data.split('_')
+    _, l, cat = c.data.split('_')
     names = {'shop': STRINGS[l]['cat_shop'], 'admin': STRINGS[l]['cat_admin'], 'game': STRINGS[l]['cat_game']}
-    text = STRINGS[l]['pre_msg'] + names[cat]
-    url = f"https://t.me/{ADMIN_NICK}?text={urllib.parse.quote(text)}"
+    url = f"https://t.me/{ADMIN_NICK}?text={urllib.parse.quote(STRINGS[l]['pre_msg'] + names[cat])}"
     
     kb = types.InlineKeyboardMarkup().add(types.InlineKeyboardButton(STRINGS[l]['order_btn'], url=url))
-    await bot.send_message(c.from_user.id, f"📌 <b>{names[cat]}</b>\n\nPeşəkar xidmət və qiymət təklifi üçün birbaşa adminlə əlaqə saxlayın.", reply_markup=kb)
+    await bot.send_message(c.from_user.id, f"📌 <b>{names[cat]}</b>\n\nPeşəkar xidmət təklifi üçün adminlə əlaqə saxlayın.", reply_markup=kb)
+    await c.answer()
 
-@dp.message_handler(lambda m: any(x in m.text for x in ["👨‍💻", "Destek", "Поддержка", "Support"]))
+@dp.message_handler(lambda m: "👨‍💻" in m.text)
 async def support(m: types.Message):
-    l = 'az' if "👨‍💻" in m.text else ('tr' if "Destek" in m.text else ('ru' if "Поддержка" in m.text else 'en'))
+    if "Dəstək" in m.text: l = 'az'
+    elif "Destek" in m.text: l = 'tr'
+    elif "Поддержка" in m.text: l = 'ru'
+    else: l = 'en'
+    # Düymənin üzərində @lərəb görünmür, yalnız Admin mətni görünür
     kb = types.InlineKeyboardMarkup().add(types.InlineKeyboardButton("💬 " + STRINGS[l]['admin_label'], url=f"https://t.me/{ADMIN_NICK}"))
-    await m.answer(f"⚙️ <b>Botify Studio Support</b>\n\n{STRINGS[l]['btn_support']}:", reply_markup=kb)
+    await m.answer(f"⚙️ <b>Botify Studio Support</b>", reply_markup=kb)
 
-@dp.message_handler(lambda m: any(x in m.text for x in ["🌍", "Dili", "Language"]))
+@dp.message_handler(lambda m: "🌍" in m.text)
 async def lang_change(m: types.Message):
     await start(m)
 
